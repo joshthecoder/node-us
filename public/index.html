@@ -8,10 +8,7 @@
     <script type="text/javascript">
         function loaded() {
             var embers = [];
-            var renderer = new Renderer(function() {
-                paintTimeout();
-                setInterval(paintTimeout, 100);
-            });
+            var renderer = new Renderer();
 
             // An ember is an object with a few values:
             // x - x position
@@ -55,6 +52,9 @@
                 addRandomEmbers();
                 renderer.paint(embers);
             }
+
+            paintTimeout();
+            setInterval(paintTimeout, 100);
         }
     </script>
 </head>

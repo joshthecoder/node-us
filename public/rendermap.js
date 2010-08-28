@@ -2,14 +2,18 @@ function Renderer(successCallback) {
     var that = this;
     this.width = 1000;
     this.height = 439;
+
     this.background = document.body.appendChild(document.createElement("div"));
+    this.background.style.textAlign = "center";
+    this.background.style.margin = "0 auto";
+    this.background.style.width = this.width + "px";
+    this.background.style.backgroundImage = "url(small_map2.png)"
+
     this.canvas = this.background.appendChild(document.createElement("canvas"));
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.context = this.canvas.getContext('2d');
-    this.mapImage = new Image();
-    this.mapImage.onload = successCallback;
-    this.mapImage.src = "small_map2.png";
+
     this.maxEmberSize = 6;
     this.youngEmberColor = [255, 255, 255, 1.0];
     this.oldEmberColor = [200, 200, 200, 0.0];
@@ -32,9 +36,11 @@ function Renderer(successCallback) {
     }
 
     this.paint = function(embers) {
-        this.context.drawImage(this.mapImage, 0, 0);
+        this.context.clearRect(0, 0, this.width, this.height);
         for (var i = 0; i < embers.length; i++) {
             drawEmber(embers[i]);
         }
     }
+
+    return this;
 }
