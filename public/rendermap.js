@@ -7,7 +7,7 @@ function Renderer(successCallback) {
     this.background.style.textAlign = "center";
     this.background.style.margin = "0 auto";
     this.background.style.width = this.width + "px";
-    this.background.style.backgroundImage = "url(small_map2.png)"
+    this.background.style.backgroundImage = "url(pixel_map.png)"
 
     this.canvas = this.background.appendChild(document.createElement("canvas"));
     this.canvas.width = this.width;
