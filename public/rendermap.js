@@ -3,7 +3,7 @@ function Renderer(context, successCallback) {
     this.context = context;
     this.mapImage = new Image();
     this.mapImage.onload = successCallback;
-    this.mapImage.src = "small_map.png";
+    this.mapImage.src = "small_map2.png";
     this.maxEmberSize = 6;
     this.youngEmberColor = [255, 255, 255, 1.0];
     this.oldEmberColor = [200, 200, 200, 0.0];
