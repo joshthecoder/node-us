@@ -1,3 +1,9 @@
 body {
     text-align: center;
+    background-color: black;
+}
+logo {
+    martin: 0 auto;
+    text-align: center;
+    width: 578px;
 }
