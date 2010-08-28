@@ -13,7 +13,7 @@ var log = require('sys').log;
 
 // Server options...
 var PUBLIC_PATH = __dirname + '/public';
-var HTTP_PORT = 8080;
+var HTTP_PORT = 80;
 var TWITTER_CREDENTIALS = {
     user: 'node_us',
     password: 'Windy48$'
