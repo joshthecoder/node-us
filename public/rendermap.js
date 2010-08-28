@@ -1,6 +1,12 @@
-function Renderer(context, successCallback) {
+function Renderer(successCallback) {
     var that = this;
-    this.context = context;
+    this.width = 1000;
+    this.height = 439;
+    this.background = document.body.appendChild(document.createElement("div"));
+    this.canvas = this.background.appendChild(document.createElement("canvas"));
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+    this.context = this.canvas.getContext('2d');
     this.mapImage = new Image();
     this.mapImage.onload = successCallback;
     this.mapImage.src = "small_map2.png";
@@ -22,7 +28,7 @@ function Renderer(context, successCallback) {
             (that.youngEmberColor[3] + (that.emberColorDifference[3] * ember.age)) + ')';
         var size = (1.0 - ember.age) * that.maxEmberSize;
         var offset = size / 2;
-        context.fillRect(ember.x - offset, ember.y - offset, size, size);
+        that.context.fillRect(ember.x - offset, ember.y - offset, size, size);
     }
 
     this.paint = function(embers) {
