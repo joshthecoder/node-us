@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html>
-<style>
-    body {
-        text-align: center;
-    }
-    #id {
-        text-align: center;
-        margin: 0 auto;
-        width: 1000px;
-    }
-</style>
+<head>
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
+	<title>Twitter Realtime Map</title>
+</head>
 <body>
     <canvas id="map" width="1000" height="540">
     Sorry, you need canvas for this baby.
     </canvas>
+
     <script type="text/javascript">
         var ctx = document.getElementById('map').getContext('2d'); 
         var mapImage = new Image();
@@ -22,5 +17,8 @@
             ctx.drawImage(mapImage, 0, 0);
         }
     </script>
+
+	<!-- Load required libraries -->
+	<script src="socket.io.js"></script>
 </body>
 </html>
