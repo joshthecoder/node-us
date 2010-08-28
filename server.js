@@ -15,8 +15,8 @@ var log = require('sys').log;
 var PUBLIC_PATH = __dirname + '/public';
 var HTTP_PORT = 8080;
 var TWITTER_CREDENTIALS = {
-    user: 'tweepytest',
-    password: 'josh123'
+    user: 'node_us',
+    password: 'Windy48$'
 }
 
 // Setup a HTTP server to serve both our static and streaming content.
