@@ -10,11 +10,83 @@
     </canvas>
 
     <script type="text/javascript">
+        var remove_from_array = function(arr, from, to) {
+            var rest = arr.slice((to || from) + 1 || array.length);
+            arr.length = from < 0 ? arr.length + from : from;
+            return arr.push.apply(arr, rest);
+        };
+
+        var embers = [];
         var ctx = document.getElementById('map').getContext('2d'); 
         var mapImage = new Image();
         mapImage.src = "small_map.png";
+
+        var EMBER_SIZE = 5;
+        var EMBER_OFFSET = (EMBER_SIZE - 1) / 2;
+        var EMBER_COLOR_FROM = [255, 255, 255];
+        var EMBER_COLOR_TO = [200, 200, 200];
+        var EMBER_COLOR_DIFFERENCE = [];
+        EMBER_COLOR_DIFFERENCE[0] = EMBER_COLOR_TO[0] - EMBER_COLOR_FROM[0];
+        EMBER_COLOR_DIFFERENCE[1] = EMBER_COLOR_TO[1] - EMBER_COLOR_FROM[1];
+        EMBER_COLOR_DIFFERENCE[2] = EMBER_COLOR_TO[2] - EMBER_COLOR_FROM[2];
+
+        // An ember is an object with a few values:
+        // x - x position
+        // y - y position
+        // age - the current age, from 0 to 1.0
+        function makeEmber(x, y, age) {
+            var ember = new Object();
+            ember.x = x;
+            ember.y = y;
+            ember.age = age;
+            return ember;
+        }
+
+        function drawBackground(image) {
+            ctx.drawImage(image, 0, 0);
+        }
+
+        function drawEmber(ember) {
+            size = (1.0 - ember.age) * EMBER_SIZE;
+            offset = size / 2;
+            color = [Math.floor(EMBER_COLOR_FROM[0] + (EMBER_COLOR_DIFFERENCE[0] * ember.age)),
+                     Math.floor(EMBER_COLOR_FROM[1] + (EMBER_COLOR_DIFFERENCE[1] * ember.age)),
+                     Math.floor(EMBER_COLOR_FROM[2] + (EMBER_COLOR_DIFFERENCE[2] * ember.age)),
+                     1.0 - ember.age];
+            ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + color[3] + ')';
+            console.log(color);
+            console.log(ctx.fillStyle);
+            ctx.fillRect(ember.x - offset, ember.y - offset, size, size);
+        }
+
         mapImage.onload = function() {
-            ctx.drawImage(mapImage, 0, 0);
+            addRandomEmbers();
+            paint();
+            setInterval(paint, 50);
+            setInterval(addRandomEmbers, 3000);
+        }
+
+        function addRandomEmbers() {
+            var randomEmber = function() {
+                return makeEmber(Math.floor(Math.random() * 1000),
+                    Math.floor(Math.random() * 540), Math.random());
+            }
+            for (var i = 0; i < 1000; i++) {
+                embers.push(randomEmber());
+            }
+        }
+
+        function paint() {
+            drawBackground(mapImage);
+            for (var i = 0; i < embers.length; i++) {
+                if (embers[i].age >= 1.0) {
+                    remove_from_array(embers, i, i);
+                    i--;
+                } else {
+                    embers[i].age += 0.02;
+                    drawEmber(embers[i]);
+                }
+            }
         }
     </script>
 
