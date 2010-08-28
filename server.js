@@ -41,4 +41,7 @@ tweetsampler.on('tweet', function(tweet) {
 tweetsampler.on('error', function(error) {
     log('Tweet sampler error: ' + error);
 });
-tweetsampler.stream();
+tweetsampler.on("end", function() {
+    log('Tweet sampler stopped');
+})
+//tweetsampler.stream();
