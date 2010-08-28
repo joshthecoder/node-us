@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
-	<title>Twitter Realtime Map</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
+    <title>Twitter Realtime Map</title>
 </head>
 <body>
     <canvas id="map" width="1000" height="540">
@@ -21,8 +21,7 @@
         var mapImage = new Image();
         mapImage.src = "small_map.png";
 
-        var EMBER_SIZE = 5;
-        var EMBER_OFFSET = (EMBER_SIZE - 1) / 2;
+        var EMBER_SIZE = 6;
         var EMBER_COLOR_FROM = [255, 255, 255];
         var EMBER_COLOR_TO = [200, 200, 200];
         var EMBER_COLOR_DIFFERENCE = [];
@@ -63,7 +62,6 @@
             addRandomEmbers();
             paint();
             setInterval(paint, 50);
-            setInterval(addRandomEmbers, 3000);
         }
 
         function addRandomEmbers() {
@@ -71,26 +69,27 @@
                 return makeEmber(Math.floor(Math.random() * 1000),
                     Math.floor(Math.random() * 540), Math.random());
             }
-            for (var i = 0; i < 1000; i++) {
+            for (var i = 0; i < 5; i++) {
                 embers.push(randomEmber());
             }
         }
 
         function paint() {
+            addRandomEmbers();
             drawBackground(mapImage);
             for (var i = 0; i < embers.length; i++) {
                 if (embers[i].age >= 1.0) {
                     remove_from_array(embers, i, i);
                     i--;
                 } else {
-                    embers[i].age += 0.02;
+                    embers[i].age += 0.01;
                     drawEmber(embers[i]);
                 }
             }
         }
     </script>
 
-	<!-- Load required libraries -->
-	<script src="socket.io.js"></script>
+    <!-- Load required libraries -->
+    <script src="socket.io.js"></script>
 </body>
 </html>
