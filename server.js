@@ -7,7 +7,7 @@
  */
 
 var connect = require('connect');
-var socketio = require('socket.io.js');
+var socketio = require('socket.io');
 var twitter = require('twitter-node');
 var log = require('sys').log;
 
@@ -26,14 +26,14 @@ var httpserver = connect.createServer(
 httpserver.listen(HTTP_PORT);
 
 // Setup up our listening socket that will deliver the tweet stream.
-var tweetstream = io.listen(httpserver, {resource: 'tweetstream'});
+var tweetstream = socketio.listen(httpserver, {resource: 'tweetstream'});
 
 // Establish a sample stream connection with Twitter.
 var tweetsampler = new twitter.TwitterNode(TWITTER_CREDENTIALS);
 tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
     if (tweet.geo) {
-        log("got geo! " + tweet.geo);
+        tweetstream.broadcast(tweet.geo.coordinates);
     } else {
         // TODO: try looking up user's location
     }
