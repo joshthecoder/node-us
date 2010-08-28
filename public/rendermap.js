@@ -1,12 +1,13 @@
 function Renderer(successCallback) {
     var that = this;
     this.width = 1000;
-    this.height = 439;
+    this.height = 507;
 
     this.background = document.body.appendChild(document.createElement("div"));
     this.background.style.textAlign = "center";
     this.background.style.margin = "0 auto";
     this.background.style.width = this.width + "px";
+    this.background.style.height = this.height + "px";
     this.background.style.backgroundImage = "url(pixel_map.png)"
 
     this.canvas = this.background.appendChild(document.createElement("canvas"));

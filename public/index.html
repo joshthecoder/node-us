@@ -24,8 +24,8 @@
 
             function addRandomEmbers() {
                 var randomEmber = function() {
-                    return makeEmber(Math.floor(Math.random() * 1000),
-                        Math.floor(Math.random() * 439), Math.random());
+                    return makeEmber(Math.floor(Math.random() * renderer.width),
+                        Math.floor(Math.random() * renderer.height), Math.random());
                 }
                 for (var i = 0; i < 10; i++) {
                     embers.push(randomEmber());
