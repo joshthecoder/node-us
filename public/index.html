@@ -23,7 +23,7 @@
 
         var EMBER_SIZE = 5;
         var EMBER_OFFSET = (EMBER_SIZE - 1) / 2;
-        var EMBER_COLOR_FROM = [236, 96, 5];
+        var EMBER_COLOR_FROM = [255, 255, 255];
         var EMBER_COLOR_TO = [200, 200, 200];
         var EMBER_COLOR_DIFFERENCE = [];
         EMBER_COLOR_DIFFERENCE[0] = EMBER_COLOR_TO[0] - EMBER_COLOR_FROM[0];
@@ -47,6 +47,8 @@
         }
 
         function drawEmber(ember) {
+            size = (1.0 - ember.age) * EMBER_SIZE;
+            offset = size / 2;
             color = [Math.floor(EMBER_COLOR_FROM[0] + (EMBER_COLOR_DIFFERENCE[0] * ember.age)),
                      Math.floor(EMBER_COLOR_FROM[1] + (EMBER_COLOR_DIFFERENCE[1] * ember.age)),
                      Math.floor(EMBER_COLOR_FROM[2] + (EMBER_COLOR_DIFFERENCE[2] * ember.age)),
@@ -54,14 +56,14 @@
             ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + color[3] + ')';
             console.log(color);
             console.log(ctx.fillStyle);
-            ctx.fillRect(ember.x - EMBER_OFFSET, ember.y - EMBER_OFFSET, EMBER_SIZE, EMBER_SIZE);
+            ctx.fillRect(ember.x - offset, ember.y - offset, size, size);
         }
 
         mapImage.onload = function() {
             addRandomEmbers();
             paint();
-            setInterval(paint, 200);
-            setInterval(addRandomEmbers, 1000);
+            setInterval(paint, 50);
+            setInterval(addRandomEmbers, 3000);
         }
 
         function addRandomEmbers() {
@@ -81,7 +83,7 @@
                     remove_from_array(embers, i, i);
                     i--;
                 } else {
-                    embers[i].age += 0.05;
+                    embers[i].age += 0.02;
                     drawEmber(embers[i]);
                 }
             }
