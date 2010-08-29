@@ -12,6 +12,7 @@ var connect = require('connect');
 var socketio = require('socket.io');
 var twitter = require('twitter-node');
 var yahoo = require('./lib/yahooapis');
+var geocache = require('./lib/geocache.js');
 
 // Load settings
 var settings = JSON.parse(fs.readFileSync('/home/node/settings.json', 'utf8'));
@@ -32,7 +33,7 @@ httpserver.listen(settings.http_port);
  * tweets and other cool geotagged data.
  */
 var emberstream = socketio.listen(httpserver, {resource: 'emberstream'});
-emberstream.broadcastTweet function(tweet, location) {
+emberstream.broadcastTweet = function(tweet, location) {
     var msg = JSON.stringify({
         type: 'tweet',
         location: location,
@@ -84,7 +85,7 @@ tweetsampler.on('tweet', function(tweet) {
             if (value) {
                 var coordinates = value.split(' ');
                 emberstream.broadcastTweet(tweet, coordinates);
-            } eslse {
+            } else {
                 // Try looking up location with Yahoo API
                 placefinder.throttledQuery(location, function(result) {
                    if (result) {
@@ -93,7 +94,7 @@ tweetsampler.on('tweet', function(tweet) {
                    }
                 });
             }
-        })
+        });
     }
 });
 tweetsampler.on('error', function(error) {
