@@ -14,12 +14,10 @@ var yahoo = require('./lib/yahooapis');
 
 // Server options...
 var PUBLIC_PATH = __dirname + '/public';
-var HTTP_PORT = 8080;
+var HTTP_PORT = 80;
 var TWITTER_CREDENTIALS = {
-    //user: 'node_us',
-    //password: 'Windy48$'
-    user: 'tweepytest',
-    password: 'josh123'
+    user: 'node_us',
+    password: 'Windy48$'
 }
 var PLACEFINDER_DELAY = 5000;
 var YAHOOAPPID = 'mQ1VLh58';
