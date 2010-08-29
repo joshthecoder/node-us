@@ -66,12 +66,12 @@ function Renderer(successCallback) {
     function mouseMoved(ev) {
         var x, y;
         // Get the mouse position relative to the canvas element.
-        if (ev.offsetX || ev.offsetX == 0) { // Opera
+        if (ev.offsetX || ev.offsetX == 0) { // Opera & WebKit
           x = ev.offsetX;
           y = ev.offsetY;
         } else if (ev.layerX || ev.layerX == 0) { // Firefox
-          x = ev.layerX;
-          y = ev.layerY;
+          x = ev.layerX - that.canvas.offsetLeft;
+          y = ev.layerY - that.canvas.offsetTop;
         }
 
         if (that.currentX != x || that.currentY != y) {
