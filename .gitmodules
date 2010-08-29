@@ -1,3 +1,0 @@
-[submodule "lib/hashlib"]
-	path = lib/hashlib
-	url = git://github.com/brainfucker/hashlib.git
