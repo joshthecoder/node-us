@@ -40,7 +40,6 @@ emberstream.broadcastTweet = function(tweet, location) {
         text: tweet.text,
         screen_name: tweet.user.screen_name
     });
-    sys.log('Broadcasting tweet: ' + msg);
     this.broadcast(msg);
 }
 
