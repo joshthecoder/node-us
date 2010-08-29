@@ -83,7 +83,7 @@ tweetsampler.on('tweet', function(tweet) {
         // First check our cache for coordinates to their location.
         geocache.query(location, function(value) {
             if (value) {
-                var coordinates = value.split(' ');
+                var coordinates = String.prototype.split.call(value, ' ');
                 emberstream.broadcastTweet(tweet, coordinates);
             } else {
                 // Try looking up location with Yahoo API
