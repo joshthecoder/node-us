@@ -88,7 +88,7 @@ tweetsampler.on('tweet', function(tweet) {
             } else {
                 // Try looking up location with Yahoo API
                 placefinder.throttledQuery(location, function(result) {
-                   if (result) {
+                   if (result && result.quality > 15) {
                        var coordinates = [result.latitude, result.longitude];
                        geocache.store(location, coordinates);
                        emberstream.broadcastTweet(tweet, coordinates)
