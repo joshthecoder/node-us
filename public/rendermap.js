@@ -20,7 +20,7 @@ function Renderer(successCallback) {
     this.tweetBox = document.body.appendChild(document.createElement("div"));
     this.tweetBox.id = 'tweet';
     this.tweetBox.style.fontFamily = 'OhFourBeeOhThree';
-    this.tweetBox.style.fontSize = '20pt';
+    this.tweetBox.style.fontSize = '17pt';
     this.tweetBox.style.color = 'white';
     this.tweetBox.style.margin = "0 auto";
     this.tweetBox.style.width = (this.width * 0.75) + "px";

@@ -67,7 +67,7 @@
             socket.addEvent('message', function(data){
                 var message = JSON.parse(data);
                 embers.push(makeEmber(
-                    message.location[1], message.location[0], 0.0, message.text));
+                    message.location[1], message.location[0], 0.0, message.screen_name + " tweenkled:<br/>" + message.text));
             });
         }
     </script>
