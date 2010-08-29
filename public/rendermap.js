@@ -22,6 +22,8 @@ function Renderer(successCallback) {
     this.tweetBox.style.fontFamily = 'OhFourBeeOhThree';
     this.tweetBox.style.fontSize = '20pt';
     this.tweetBox.style.color = 'white';
+    this.tweetBox.style.margin = "0 auto";
+    this.tweetBox.style.width = (this.width * 0.75) + "px";
 
     this.maxEmberSize = 6;
     this.youngEmberColor = [255, 255, 255, 1.0];
