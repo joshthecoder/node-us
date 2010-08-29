@@ -90,7 +90,7 @@ tweetsampler.on('tweet', function(tweet) {
                 placefinder.throttledQuery(location, function(result) {
                    if (result) {
                        var coordinates = [result.latitude, result.longitude];
-                       geocache.store(coordinates);
+                       geocache.store(location, coordinates);
                        emberstream.broadcastTweet(tweet, coordinates)
                    }
                 });
