@@ -32,7 +32,7 @@ httpserver.listen(settings.http_port);
  * tweets and other cool geotagged data.
  */
 var emberstream = socketio.listen(httpserver, {resource: 'emberstream'});
-emberstream.broadcastTweet function(tweet, location) {
+emberstream.broadcastTweet = function(tweet, location) {
     var msg = JSON.stringify({
         type: 'tweet',
         location: location,
