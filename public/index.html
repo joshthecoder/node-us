@@ -52,15 +52,14 @@
                         embers.remove(i);
                         i--;
                     } else {
-                        embers[i].age += 0.01;
+                        embers[i].age += 0.001;
                     }
                 }
-                //addRandomEmbers();
                 renderer.paint(embers);
             }
 
             paintTimeout();
-            setInterval(paintTimeout, 1000);
+            setInterval(paintTimeout, 100);
 
             socket = new io.Socket('node-us.no.de', { resource: 'tweetstream' });
             socket.connect();
