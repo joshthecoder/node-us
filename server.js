@@ -93,7 +93,7 @@ tweetsampler.on('tweet', function(tweet) {
                    }
                 });
             }
-        })
+        });
     }
 });
 tweetsampler.on('error', function(error) {
