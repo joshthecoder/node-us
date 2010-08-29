@@ -7,3 +7,8 @@ logo {
     text-align: center;
     width: 578px;
 }
+@font-face {
+  font-family: OhFourBeeOhThree;
+  src: url(04b_03.ttf);
+}
+

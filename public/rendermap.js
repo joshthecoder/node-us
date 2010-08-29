@@ -17,6 +17,12 @@ function Renderer(successCallback) {
     this.canvas.addEventListener("mousemove", mouseMoved, false);
     this.context = this.canvas.getContext('2d');
 
+    this.tweetBox = document.body.appendChild(document.createElement("div"));
+    this.tweetBox.id = 'tweet';
+    this.tweetBox.style.fontFamily = 'OhFourBeeOhThree';
+    this.tweetBox.style.fontSize = '20pt';
+    this.tweetBox.style.color = 'white';
+
     this.maxEmberSize = 6;
     this.youngEmberColor = [255, 255, 255, 1.0];
     this.oldEmberColor = [200, 200, 200, 0.0];
@@ -27,8 +33,9 @@ function Renderer(successCallback) {
         this.oldEmberColor[3] - this.youngEmberColor[3]
     ];
 
+    this.currentEmber = null; 
     function nearEmber(ember) {
-        return Math.abs(that.currentX - ember.x) < 10 && Math.abs(that.currentY - ember.y) < 10
+        return Math.abs(that.currentX - ember.x) < 5 && Math.abs(that.currentY - ember.y) < 5;
     }
 
     function drawEmber(ember) {
@@ -38,8 +45,10 @@ function Renderer(successCallback) {
             Math.floor(that.youngEmberColor[2] + (that.emberColorDifference[2] * ember.age)) + ',' +
             (that.youngEmberColor[3] + (that.emberColorDifference[3] * ember.age)) + ')';
 
-        if (nearEmber(ember))
+        if (nearEmber(ember)) {
             that.context.fillStyle = "rgb(255, 0, 0);";
+            that.tweetBox.innerHTML = ember.text;
+        }
 
         var size = (1.0 - ember.age) * that.maxEmberSize;
         var offset = size / 2;
