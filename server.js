@@ -33,7 +33,8 @@ var tweetsampler = new twitter.TwitterNode(TWITTER_CREDENTIALS);
 tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
     if (tweet.geo) {
-        tweetstream.broadcast(tweet.geo.coordinates);
+        var msg = JSON.stringify(tweet.geo.coordinates);
+        tweetstream.broadcast(msg);
     } else {
         // TODO: try looking up user's location
     }
