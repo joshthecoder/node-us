@@ -20,13 +20,14 @@
                 var result = proj.project(longitude, latitude);
                 return [result[0] * renderer.width + renderer.xOffset, result[1] * renderer.height];
             }
-            function makeEmber(x, y, age) {
+            function makeEmber(x, y, age, text) {
                 var ember = new Object();
                 xy = projectToMap(x, y);
                 console.log([x, y] + " " + xy);
                 ember.x = xy[0];
                 ember.y = xy[1];
                 ember.age = age;
+                ember.text = text;
                 return ember;
             }
 
@@ -52,7 +53,7 @@
                         embers.remove(i);
                         i--;
                     } else {
-                        embers[i].age += 0.001;
+                        embers[i].age += 0.005;
                     }
                 }
                 renderer.paint(embers);
@@ -64,8 +65,9 @@
             socket = new io.Socket('node-us.no.de', { resource: 'emberstream' });
             socket.connect();
             socket.addEvent('message', function(data){
-                var latlong = JSON.parse(data);
-                embers.push(makeEmber(latlong[1], latlong[0], 0.0));
+                var message = JSON.parse(data);
+                embers.push(makeEmber(
+                    message.location[1], message.location[0], 0.0, message.tweet));
             });
         }
     </script>
