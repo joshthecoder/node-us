@@ -32,6 +32,15 @@ httpserver.listen(settings.http_port);
  * tweets and other cool geotagged data.
  */
 var emberstream = socketio.listen(httpserver, {resource: 'emberstream'});
+emberstream.broadcastTweet function(tweet, location) {
+    var msg = JSON.stringify({
+        type: 'tweet',
+        location: location,
+        text: tweet.text,
+        screen_name: tweet.user.screen_name
+    });
+    this.broadcast(msg);
+}
 
 /**
  * Yahoo Geocoding API
@@ -43,33 +52,15 @@ var emberstream = socketio.listen(httpserver, {resource: 'emberstream'});
  */
 var placefinder = new yahoo.PlaceFinder(settings.yahoo.appid);
 placefinder._canQuery = true;
-placefinder.throttledQuery = function(location) {
+placefinder.throttledQuery = function(location, callback) {
     // To avoid eating up our quota of query calls, we will
     // only poll the location every X seconds.
     if (this._canQuery) {
-        this.query(location);
+        this.queryBest(location, callback);
         this._canQuery = false;
         setTimeout(function() { placefinder._canQuery = true; }, settings.yahoo.placefinder_delay);
     }
 }
-placefinder.on('results', function(results) {
-    if (!results.length) return;
-    var result = results[0];
-
-    if (results.length > 1) {
-        // If we get many results, use the one with one
-        // with the top quality score.
-        for (var i = 1; i < results.length; results++) {
-            if (results[i].quality > result.quality) {
-                result = results[i];
-            }
-        }
-    }
-
-    var msg = JSON.stringify([result.latitude, result.longitude]);
-    sys.log("User location result: " + msg + " quality=" + result.quality);
-    emberstream.broadcast(msg);
-});
 placefinder.on('error', function(code, msg) {
     sys.log('Placefinder error: #' + code + ' - ' + msg);
 });
@@ -81,13 +72,28 @@ var tweetsampler = new twitter.TwitterNode(settings.twitter);
 tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
     if (tweet.geo) {
-        var msg = JSON.stringify(tweet.geo.coordinates);
-        emberstream.broadcast(msg);
+        emberstream.broadcastTweet(tweet, tweet.geo.coordinates);
     } else {
         var location = tweet.user.location;
-        if (location) {
-            placefinder.throttledQuery(location);
-        }
+        if (!location) return;
+
+        // If there is no geo-location attached to the tweeet,
+        // use the user's location property instead.
+        // First check our cache for coordinates to their location.
+        geocache.query(location, function(value) {
+            if (value) {
+                var coordinates = value.split(' ');
+                emberstream.broadcastTweet(tweet, coordinates);
+            } eslse {
+                // Try looking up location with Yahoo API
+                placefinder.throttledQuery(location, function(result) {
+                   if (result) {
+                       var coordinates = [result.latitude, result.longitude];
+                       emberstream.broadcastTweet(tweet, coordinates)
+                   }
+                });
+            }
+        })
     }
 });
 tweetsampler.on('error', function(error) {
