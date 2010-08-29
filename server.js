@@ -6,29 +6,82 @@
  * Data is received from Twitter via thair streaming API.
  */
 
+var sys = require('sys');
 var connect = require('connect');
 var socketio = require('socket.io');
 var twitter = require('twitter-node');
-var log = require('sys').log;
+var yahoo = require('./lib/yahooapis');
 
 // Server options...
 var PUBLIC_PATH = __dirname + '/public';
-var HTTP_PORT = 80;
+var HTTP_PORT = 8080;
 var TWITTER_CREDENTIALS = {
-    user: 'node_us',
-    password: 'Windy48$'
+    //user: 'node_us',
+    //password: 'Windy48$'
+    user: 'tweepytest',
+    password: 'josh123'
 }
+var PLACEFINDER_DELAY = 5000;
+var YAHOOAPPID = 'mQ1VLh58';
 
-// Setup a HTTP server to serve both our static and streaming content.
+/**
+ * HTTP server for static and streaming content
+ */
 var httpserver = connect.createServer(
     connect.staticProvider(PUBLIC_PATH)
 );
 httpserver.listen(HTTP_PORT);
 
-// Setup up our listening socket that will deliver the tweet stream.
+/**
+ * Twitter geolocation stream server socket
+ */
 var tweetstream = socketio.listen(httpserver, {resource: 'tweetstream'});
 
-// Establish a sample stream connection with Twitter.
+/**
+ * Yahoo Geocoding API
+ *
+ * If we are unable to get a geolocation for a tweet, we
+ * can try looking up the user's profile location instead.
+ * We pass Yahoo the location string and their service tries to
+ * convert it into a coordinate set.
+ */
+var placefinder = new yahoo.PlaceFinder(YAHOOAPPID);
+placefinder._canQuery = true;
+placefinder.throttledQuery = function(location) {
+    // To avoid eating up our quota of query calls, we will
+    // only poll the location every X seconds.
+    if (this._canQuery) {
+        sys.log('Querying user location...');
+        this.query(location);
+        this._canQuery = false;
+        setTimeout(function() { placefinder._canQuery = true; }, PLACEFINDER_DELAY);
+    }
+}
+placefinder.on('results', function(results) {
+    if (!results.length) return;
+    var result = results[0];
+
+    if (results.length > 1) {
+        // If we get many results, use the one with one
+        // with the top quality score.
+        for (var i = 1; i < results.length; results++) {
+            if (results[i].quality > result.quality) {
+                result = results[i];
+            }
+        }
+    }
+
+    var msg = JSON.stringify([result.latitude, result.longitude]);
+    sys.log('Got location result: ' + msg);
+    tweetstream.broadcast(msg);
+});
+placefinder.on('error', function(code, msg) {
+    sys.log('Placefinder error: #' + code + ' - ' + msg);
+});
+
+/**
+ * Twitter streaming API sampler
+ */
 var tweetsampler = new twitter.TwitterNode(TWITTER_CREDENTIALS);
 tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
@@ -36,13 +89,21 @@ tweetsampler.on('tweet', function(tweet) {
         var msg = JSON.stringify(tweet.geo.coordinates);
         tweetstream.broadcast(msg);
     } else {
-        // TODO: try looking up user's location
+        var location = tweet.user.location;
+        if (location) {
+            placefinder.throttledQuery(location);
+        }
     }
 });
 tweetsampler.on('error', function(error) {
-    log('Tweet sampler error: ' + error);
+    sys.log('Tweet sampler error: ' + error);
 });
 tweetsampler.on("end", function() {
-    log('Tweet sampler stopped');
+    sys.log('Tweet sampler stopped while try restarting in a bit');
+    setTimeout(function() {
+        // Attempt to restart stream after a little bit...
+        sys.log("Attempting to restart stream...");
+        tweetsampler.stream();
+    }, 20000);
 })
 tweetsampler.stream();
