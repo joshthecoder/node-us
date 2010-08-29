@@ -23,6 +23,7 @@
             function makeEmber(x, y, age) {
                 var ember = new Object();
                 xy = projectToMap(x, y);
+                console.log([x, y] + " " + xy);
                 ember.x = xy[0];
                 ember.y = xy[1];
                 ember.age = age;
@@ -54,12 +55,19 @@
                         embers[i].age += 0.01;
                     }
                 }
-                addRandomEmbers();
+                //addRandomEmbers();
                 renderer.paint(embers);
             }
 
             paintTimeout();
-            setInterval(paintTimeout, 100);
+            setInterval(paintTimeout, 1000);
+
+            socket = new io.Socket('node-us.no.de', { resource: 'tweetstream' });
+            socket.connect();
+            socket.addEvent('message', function(data){
+                var latlong = JSON.parse(data);
+                embers.push(makeEmber(latlong[1], latlong[0], 0.0));
+            });
         }
     </script>
 </head>
