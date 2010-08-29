@@ -14,6 +14,7 @@ function Renderer(successCallback) {
     this.canvas = this.background.appendChild(document.createElement("canvas"));
     this.canvas.width = this.width;
     this.canvas.height = this.height;
+    this.canvas.addEventListener("mousemove", mouseMoved, false);
     this.context = this.canvas.getContext('2d');
 
     this.maxEmberSize = 6;
@@ -26,12 +27,20 @@ function Renderer(successCallback) {
         this.oldEmberColor[3] - this.youngEmberColor[3]
     ];
 
+    function nearEmber(ember) {
+        return Math.abs(that.currentX - ember.x) < 10 && Math.abs(that.currentY - ember.y) < 10
+    }
+
     function drawEmber(ember) {
         that.context.fillStyle = 'rgba(' +
             Math.floor(that.youngEmberColor[0] + (that.emberColorDifference[0] * ember.age)) + ',' +
             Math.floor(that.youngEmberColor[1] + (that.emberColorDifference[1] * ember.age)) + ',' +
             Math.floor(that.youngEmberColor[2] + (that.emberColorDifference[2] * ember.age)) + ',' +
             (that.youngEmberColor[3] + (that.emberColorDifference[3] * ember.age)) + ')';
+
+        if (nearEmber(ember))
+            that.context.fillStyle = "rgb(255, 0, 0);";
+
         var size = (1.0 - ember.age) * that.maxEmberSize;
         var offset = size / 2;
         that.context.fillRect(ember.x - offset, ember.y - offset, size, size);
@@ -39,8 +48,26 @@ function Renderer(successCallback) {
 
     this.paint = function(embers) {
         this.context.clearRect(0, 0, this.width, this.height);
+        var showEmber = null;
         for (var i = 0; i < embers.length; i++) {
             drawEmber(embers[i]);
+        }
+    }
+
+    function mouseMoved(ev) {
+        var x, y;
+        // Get the mouse position relative to the canvas element.
+        if (ev.offsetX || ev.offsetX == 0) { // Opera
+          x = ev.offsetX;
+          y = ev.offsetY;
+        } else if (ev.layerX || ev.layerX == 0) { // Firefox
+          x = ev.layerX;
+          y = ev.layerY;
+        }
+
+        if (that.currentX != x || that.currentY != y) {
+            that.currentX = x;
+            that.currentY = y;
         }
     }
 
