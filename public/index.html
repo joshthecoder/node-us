@@ -61,7 +61,7 @@
             paintTimeout();
             setInterval(paintTimeout, 100);
 
-            socket = new io.Socket('node-us.no.de', { resource: 'tweetstream' });
+            socket = new io.Socket('node-us.no.de', { resource: 'emberstream' });
             socket.connect();
             socket.addEvent('message', function(data){
                 var latlong = JSON.parse(data);

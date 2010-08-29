@@ -28,9 +28,10 @@ var httpserver = connect.createServer(
 httpserver.listen(settings.http_port);
 
 /**
- * Twitter geolocation stream server socket
+ * A stream of ember data used by the client to plot
+ * tweets and other cool geotagged data.
  */
-var tweetstream = socketio.listen(httpserver, {resource: 'tweetstream'});
+var emberstream = socketio.listen(httpserver, {resource: 'emberstream'});
 
 /**
  * Yahoo Geocoding API
@@ -67,7 +68,7 @@ placefinder.on('results', function(results) {
 
     var msg = JSON.stringify([result.latitude, result.longitude]);
     sys.log("User location result: " + msg + " quality=" + result.quality);
-    tweetstream.broadcast(msg);
+    emberstream.broadcast(msg);
 });
 placefinder.on('error', function(code, msg) {
     sys.log('Placefinder error: #' + code + ' - ' + msg);
@@ -81,7 +82,7 @@ tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
     if (tweet.geo) {
         var msg = JSON.stringify(tweet.geo.coordinates);
-        tweetstream.broadcast(msg);
+        emberstream.broadcast(msg);
     } else {
         var location = tweet.user.location;
         if (location) {
