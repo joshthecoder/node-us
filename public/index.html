@@ -3,10 +3,11 @@
 <head>
     <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
     <title>Twitter Realtime Map</title>
-    <script src="socket.io.js" type="text/javascript"></script>
+    <script src="socket.io/socket.io.js" type="text/javascript"></script>
     <script src="robinson.js" type="text/javascript"></script>
     <script src="rendermap.js" type="text/javascript"></script>
     <script type="text/javascript">
+        io.setPath('./socket.io/');
         function loaded() {
             var embers = [];
             var renderer = new Renderer();
