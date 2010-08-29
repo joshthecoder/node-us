@@ -49,7 +49,6 @@ placefinder.throttledQuery = function(location) {
     // To avoid eating up our quota of query calls, we will
     // only poll the location every X seconds.
     if (this._canQuery) {
-        sys.log('Querying user location...');
         this.query(location);
         this._canQuery = false;
         setTimeout(function() { placefinder._canQuery = true; }, PLACEFINDER_DELAY);
@@ -70,7 +69,7 @@ placefinder.on('results', function(results) {
     }
 
     var msg = JSON.stringify([result.latitude, result.longitude]);
-    sys.log('Got location result: ' + msg);
+    sys.log("User location result: " + msg + " quality=" + result.quality);
     tweetstream.broadcast(msg);
 });
 placefinder.on('error', function(code, msg) {
