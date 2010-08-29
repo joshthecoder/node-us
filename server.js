@@ -7,20 +7,17 @@
  */
 
 var sys = require('sys');
+var fs = require('fs');
 var connect = require('connect');
 var socketio = require('socket.io');
 var twitter = require('twitter-node');
 var yahoo = require('./lib/yahooapis');
 
-// Server options...
+// Load settings
+var settings = JSON.parse(fs.readFileSync('/home/node/settings.json', 'utf8'));
+
+// Location of our public asserts folder
 var PUBLIC_PATH = __dirname + '/public';
-var HTTP_PORT = 80;
-var TWITTER_CREDENTIALS = {
-    user: 'node_us',
-    password: 'Windy48$'
-}
-var PLACEFINDER_DELAY = 5000;
-var YAHOOAPPID = 'mQ1VLh58';
 
 /**
  * HTTP server for static and streaming content
@@ -28,7 +25,7 @@ var YAHOOAPPID = 'mQ1VLh58';
 var httpserver = connect.createServer(
     connect.staticProvider(PUBLIC_PATH)
 );
-httpserver.listen(HTTP_PORT);
+httpserver.listen(settings.http_port);
 
 /**
  * Twitter geolocation stream server socket
@@ -43,7 +40,7 @@ var tweetstream = socketio.listen(httpserver, {resource: 'tweetstream'});
  * We pass Yahoo the location string and their service tries to
  * convert it into a coordinate set.
  */
-var placefinder = new yahoo.PlaceFinder(YAHOOAPPID);
+var placefinder = new yahoo.PlaceFinder(settings.yahoo.appid);
 placefinder._canQuery = true;
 placefinder.throttledQuery = function(location) {
     // To avoid eating up our quota of query calls, we will
@@ -51,7 +48,7 @@ placefinder.throttledQuery = function(location) {
     if (this._canQuery) {
         this.query(location);
         this._canQuery = false;
-        setTimeout(function() { placefinder._canQuery = true; }, PLACEFINDER_DELAY);
+        setTimeout(function() { placefinder._canQuery = true; }, settings.yahoo.placefinder_delay);
     }
 }
 placefinder.on('results', function(results) {
@@ -79,7 +76,7 @@ placefinder.on('error', function(code, msg) {
 /**
  * Twitter streaming API sampler
  */
-var tweetsampler = new twitter.TwitterNode(TWITTER_CREDENTIALS);
+var tweetsampler = new twitter.TwitterNode(settings.twitter);
 tweetsampler.action = 'sample';
 tweetsampler.on('tweet', function(tweet) {
     if (tweet.geo) {

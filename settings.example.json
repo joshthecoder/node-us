@@ -1,0 +1,11 @@
+{
+    "http_port": 80,
+    "twitter": {
+        "user": "node_us",
+        "password": "Windy48$"
+    },
+    "yahoo": {
+        "appid": "mQ1VLh58",
+        "placefinder_delay": 5000
+    }
+}
