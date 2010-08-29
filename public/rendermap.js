@@ -2,6 +2,7 @@ function Renderer(successCallback) {
     var that = this;
     this.width = 1000;
     this.height = 507;
+    this.xOffset = -25;
 
     this.background = document.body.appendChild(document.createElement("div"));
     this.background.style.textAlign = "center";

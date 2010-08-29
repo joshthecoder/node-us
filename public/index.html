@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="style.css" type="text/css" media="screen" charset="utf-8">
     <title>Twitter Realtime Map</title>
     <script src="socket.io.js" type="text/javascript"></script>
+    <script src="robinson.js" type="text/javascript"></script>
     <script src="rendermap.js" type="text/javascript"></script>
     <script type="text/javascript">
         function loaded() {
@@ -14,21 +15,26 @@
             // x - x position
             // y - y position
             // age - the current age, from 0.0 to 1.0
+            var proj = new RobinsonProjection();
+            function projectToMap(longitude, latitude) {
+                var result = proj.project(longitude, latitude);
+                return [result[0] * renderer.width + renderer.xOffset, result[1] * renderer.height];
+            }
             function makeEmber(x, y, age) {
                 var ember = new Object();
-                ember.x = x;
-                ember.y = y;
+                xy = projectToMap(x, y);
+                ember.x = xy[0];
+                ember.y = xy[1];
                 ember.age = age;
                 return ember;
             }
 
             function addRandomEmbers() {
-                var randomEmber = function() {
-                    return makeEmber(Math.floor(Math.random() * renderer.width),
-                        Math.floor(Math.random() * renderer.height), Math.random());
-                }
                 for (var i = 0; i < 10; i++) {
-                    embers.push(randomEmber());
+                    embers.push(makeEmber(
+                        180 - Math.floor(Math.random() * 360),
+                        90 - Math.floor(Math.random() * 180),
+                        Math.random()));
                 }
             }
 
@@ -48,7 +54,6 @@
                         embers[i].age += 0.01;
                     }
                 }
-
                 addRandomEmbers();
                 renderer.paint(embers);
             }
